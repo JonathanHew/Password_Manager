@@ -1,4 +1,26 @@
-master_pwd = input("What is the master password? ")
+from cryptography.fernet import Fernet
+
+# function to create a key which will be used to encrypt the txt file
+# this function should only be called once to create only a single key. 
+# It should be commented out after it is called
+# to comment in or out the code remove or add the ''' before and after 
+'''
+def write_key():
+    #generate a key using the imported ferenet cryptgraphy package
+    key = Fernet.generate_key()
+    #open key file in write in bites mode
+    with open("key.key", "wb") as k_file:
+        k_file.write(key)
+
+write_key() 
+'''
+
+#function to load key which was previously created
+def load_key():
+    file = open("key.key", "rb")
+    key = file.read()
+    file.close()
+    return key
 
 #funtion to view paswords on manager
 def view():
@@ -11,7 +33,7 @@ def view():
             data = line.rstrip()
             #split each line into 2 variables, one for account name, one for the password
             account, password = data.split("|")
-            print("Account:", account, "| Password:", password)
+            print("Account:", account, "| Password:", fer.decrypt(password.encode()).decode())
 
 
 #funtion to add a new password onto the manager
@@ -21,7 +43,12 @@ def add():
     
     #open a txt file in append mode to add to the end of the file, or create the file if it doesnt exist 
     with open("passwords.txt", 'a') as file:
-        file.write(name+ "|" + password + "\n")
+        file.write(name+ "|" + fer.encrypt(password.encode()).decode() + "\n")
+
+
+master_pwd = input("What is the master password? ")
+key = load_key() + master_pwd.encode()
+fer = Fernet(key)
 
 print("\n")
 print("Welcome to the Password Manager App")
@@ -45,6 +72,7 @@ while True:
     #if 2 is selected then enter view() function
     elif mode == '2':
         view()
+    #if something else is entered reask the question
     else: 
         print("Invalid mode.")
         continue
