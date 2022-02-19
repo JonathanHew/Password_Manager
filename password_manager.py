@@ -1,10 +1,17 @@
-master_pwd = input("What is the master password?")
+master_pwd = input("What is the master password? ")
 
+#funtion to view paswords on manager
 def view():
     print("You have selected view passwords.")
 
+#funtion to add a new password onto the manager
 def add():
-    print("You have selected add a password.")
+    name = input("Account Name: ")
+    password = input("Password: ")
+    
+    #open a txt file in append mode to add to the end of the file, or create the file if it doesnt exist 
+    with open("passwords.txt", 'a') as file:
+        file.write(name+ " : " + password + "\n")
 
 print("\n")
 print("Welcome to the Password Manager App")
